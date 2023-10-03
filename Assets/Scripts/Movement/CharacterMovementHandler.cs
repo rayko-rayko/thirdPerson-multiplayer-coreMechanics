@@ -9,45 +9,30 @@ using UnityEngine.InputSystem;
 
 public class CharacterMovementHandler : NetworkBehaviour
 {
-    private Vector2 viewInput;
-    
-    // Rotation
-
-    private float _cameraRotationX = 0;
-    
     // Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
-    private Camera _localCamera;
-
     private void Awake()
     {
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
-        _localCamera = GetComponentInChildren<Camera>();
     }
-
-    private void Update()
-    {
-        _cameraRotationX += viewInput.y * Time.deltaTime * _networkCharacterControllerPrototypeCustom.viewUpDownRotationSpeed;
-        _cameraRotationX = Mathf.Clamp(_cameraRotationX, -90, 90);
-
-        _localCamera.transform.localRotation = Quaternion.Euler(_cameraRotationX, 0, 0);
-    }
-
+    
     public override void FixedUpdateNetwork()
     {
         // Get the input from the network
         if (GetInput(out NetworkInputData networkInputData))
         {
-            // ----------------------------Rotate the view---------------------------------
-            // Rotate the view
-            _networkCharacterControllerPrototypeCustom.Rotate(networkInputData.rotationInput);
-
+            // ---------Rotate the transform according to the client aim vector------------
+            transform.forward = networkInputData.aimForwardVector;
+            
+            // Cancel out rotation on X axis as we don't want our character to tilt
+            Quaternion rotation = transform.rotation;
+            rotation.eulerAngles = new Vector3(0, rotation.eulerAngles.y, rotation.eulerAngles.z);
+            transform.rotation = rotation;
             
             // -------------------------------Move-----------------------------------------
             Vector3 moveDirection = transform.forward * networkInputData.movementInput.y + transform.right * networkInputData.movementInput.x;
             moveDirection.Normalize();
             _networkCharacterControllerPrototypeCustom.Move(moveDirection);
-            
             
             // -------------------------------Jump-----------------------------------------
             if (networkInputData.isJumpPressed)
@@ -55,7 +40,7 @@ public class CharacterMovementHandler : NetworkBehaviour
                 _networkCharacterControllerPrototypeCustom.Jump();
             }
             
-            // -------------------------------Run-----------------------------------------
+            // -------------------------------Run------------------------------------------
             if (networkInputData.isRunPressed)
             {
                 _networkCharacterControllerPrototypeCustom.maxSpeed = 10;
@@ -65,12 +50,16 @@ public class CharacterMovementHandler : NetworkBehaviour
                 _networkCharacterControllerPrototypeCustom.maxSpeed = 2;
             }
 
-            
+            // Check if we have fallen off the world
+            CheckFallRespawn();
         }
     }
 
-    public void SetViewInputVector(Vector2 viewInput)
+    void CheckFallRespawn()
     {
-        this.viewInput = viewInput;
+        if (transform.position.y < -12)
+        {
+            transform.position = Utils.GetRandomSpawnPoint();
+        }
     }
 }

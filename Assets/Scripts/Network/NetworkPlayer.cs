@@ -16,7 +16,6 @@ public class NetworkPlayer : NetworkBehaviour
         if (Object.HasInputAuthority)
         {
             Local = this;
-            
             // Sets the layer of the local palyers model
             Utils.SetRenderLayerInChildren(playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
             
@@ -36,6 +35,9 @@ public class NetworkPlayer : NetworkBehaviour
             audioListener.enabled = false;
             
             Debug.Log("Spawned remote player");
+            
+            //Make it easier to tell which player is which.
+            transform.name = $"P_{Object.Id}";
         }
     }
 

@@ -16,11 +16,11 @@ public class CharacterInputHandler : MonoBehaviour
 
     // Other components
     public static CharacterInputActions characterInputActions;
-    private CharacterMovementHandler _characterMovementHandler;
+    private LocalCameraHandler _localCameraHandler;
 
     private void Awake()
     {
-        _characterMovementHandler = GetComponent<CharacterMovementHandler>();
+        _localCameraHandler = GetComponentInChildren<LocalCameraHandler>();
     }
 
     private void Start()
@@ -31,27 +31,27 @@ public class CharacterInputHandler : MonoBehaviour
 
     private void Update()
     {
-        CharacterInput();
+        CharacterMovementInput();
     }
 
-    void CharacterInput()
+    void CharacterMovementInput()
     {
         // Move input
         moveInputVector.x = characterInputActions.Controller.Movement.ReadValue<Vector2>().x;
         moveInputVector.y = characterInputActions.Controller.Movement.ReadValue<Vector2>().y;
         
         // View input
-        viewInputVector.x = characterInputActions.Controller.Aim.ReadValue<Vector2>().x;
-        viewInputVector.y = characterInputActions.Controller.Aim.ReadValue<Vector2>().y * -1;
+        viewInputVector.x = characterInputActions.Controller.Look.ReadValue<Vector2>().x;
+        viewInputVector.y = characterInputActions.Controller.Look.ReadValue<Vector2>().y * -1;
         
         // Jump data
         _isJumpPressed = characterInputActions.Controller.Jump.IsPressed();
         
         // Run data
         _isRunPressed = characterInputActions.Controller.Run.IsPressed();
-
-        _characterMovementHandler.SetViewInputVector(viewInputVector);
         
+        // Set view
+        _localCameraHandler.SetViewInputVector(viewInputVector);
     }
 
     public NetworkInputData GetNetworkInput()
@@ -61,8 +61,8 @@ public class CharacterInputHandler : MonoBehaviour
         // Move data
         networkInputData.movementInput = moveInputVector;
         
-        // View data
-        networkInputData.rotationInput = viewInputVector.x;
+        // Aim data
+        networkInputData.aimForwardVector = _localCameraHandler.transform.forward;
         
         // Jump data
         networkInputData.isJumpPressed = _isJumpPressed;
