@@ -11,10 +11,7 @@ public class CharacterMovementHandler : NetworkBehaviour
 {
     // Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
-    private void Awake()
-    {
-        _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
-    }
+    private void Awake() { _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>(); }
     
     public override void FixedUpdateNetwork()
     {
@@ -35,20 +32,11 @@ public class CharacterMovementHandler : NetworkBehaviour
             _networkCharacterControllerPrototypeCustom.Move(moveDirection);
             
             // -------------------------------Jump-----------------------------------------
-            if (networkInputData.isJumpPressed)
-            {
-                _networkCharacterControllerPrototypeCustom.Jump();
-            }
+            if (networkInputData.isJumpPressed) { _networkCharacterControllerPrototypeCustom.Jump(); }
             
             // -------------------------------Run------------------------------------------
-            if (networkInputData.isRunPressed)
-            {
-                _networkCharacterControllerPrototypeCustom.maxSpeed = 10;
-            }
-            else if (!networkInputData.isRunPressed)
-            {
-                _networkCharacterControllerPrototypeCustom.maxSpeed = 2;
-            }
+            if (networkInputData.IsDown(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 10; }
+            else if (networkInputData.IsUp(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 2; }
 
             // Check if we have fallen off the world
             CheckFallRespawn();

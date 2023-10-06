@@ -116,6 +116,8 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
 
     Velocity   = (transform.position - previousPos) * Runner.Simulation.Config.TickRate;
     IsGrounded = Controller.isGrounded;
+    
+    Debug.Log(horizontalVel);
   }
 
   public void Rotate(float rotationY)

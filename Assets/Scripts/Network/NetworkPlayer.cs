@@ -11,6 +11,9 @@ public class NetworkPlayer : NetworkBehaviour
     public static NetworkPlayer Local { get; set; }
     public Transform playerModel;
     
+    // Camera mode
+    public bool is3rdPersonCamera { get; set; }
+    
     public override void Spawned()
     {
         if (Object.HasInputAuthority)
@@ -36,9 +39,9 @@ public class NetworkPlayer : NetworkBehaviour
             
             Debug.Log("Spawned remote player");
             
-            //Make it easier to tell which player is which.
-            transform.name = $"P_{Object.Id}";
         }
+        //Make it easier to tell which player is which.
+        transform.name = $"P_{Object.Id}";
     }
 
     public void PlayerLeft(PlayerRef playerRef)

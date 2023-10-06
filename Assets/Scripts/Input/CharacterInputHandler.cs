@@ -13,6 +13,7 @@ public class CharacterInputHandler : MonoBehaviour
     private Vector2 viewInputVector = Vector2.zero;
     private bool _isJumpPressed = false;
     private bool _isRunPressed = false;
+    private bool _isChangeCameraPressed;
 
     // Other components
     public static CharacterInputActions characterInputActions;
@@ -32,26 +33,36 @@ public class CharacterInputHandler : MonoBehaviour
     private void Update()
     {
         CharacterMovementInput();
+        ChangeCamera();
     }
 
     void CharacterMovementInput()
     {
         // Move input
-        moveInputVector.x = characterInputActions.Controller.Movement.ReadValue<Vector2>().x;
-        moveInputVector.y = characterInputActions.Controller.Movement.ReadValue<Vector2>().y;
+        moveInputVector = characterInputActions.Controller.Movement.ReadValue<Vector2>();
         
         // View input
         viewInputVector.x = characterInputActions.Controller.Look.ReadValue<Vector2>().x;
         viewInputVector.y = characterInputActions.Controller.Look.ReadValue<Vector2>().y * -1;
         
-        // Jump data
-        _isJumpPressed = characterInputActions.Controller.Jump.IsPressed();
+        // Jump input
+        _isJumpPressed = characterInputActions.Controller.Jump.triggered;
         
-        // Run data
+        // Run input
         _isRunPressed = characterInputActions.Controller.Run.IsPressed();
+        Debug.Log("inputhandler "+ _isRunPressed);
         
-        // Set view
+        // Set view input
         _localCameraHandler.SetViewInputVector(viewInputVector);
+    }
+    void ChangeCamera()
+    {
+        // Change Camera input
+        _isChangeCameraPressed = characterInputActions.Controller.Camera.triggered;
+        if (_isChangeCameraPressed)
+        {
+            NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera;
+        }
     }
 
     public NetworkInputData GetNetworkInput()
@@ -68,7 +79,7 @@ public class CharacterInputHandler : MonoBehaviour
         networkInputData.isJumpPressed = _isJumpPressed;
         
         // Run data
-        networkInputData.isRunPressed = _isRunPressed;
+        networkInputData.Buttons.Set(NetworkInputData.BUTTON_RUN, characterInputActions.Controller.Run.IsPressed());
         
         // Reset variable
         _isJumpPressed = false;

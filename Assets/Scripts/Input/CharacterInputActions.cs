@@ -42,8 +42,8 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
                     ""id"": ""e95b1694-8e44-46c3-be99-7aabe7056f96"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""interactions"": ""Hold"",
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Jump"",
@@ -80,6 +80,15 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Camera"",
+                    ""type"": ""Button"",
+                    ""id"": ""d967e243-ed9d-4067-b7b6-82b33d165fd3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -192,6 +201,17 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c2224c46-060b-4cd8-ad27-61d1e0e3f750"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Camera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -206,6 +226,7 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
         m_Controller_Look = m_Controller.FindAction("Look", throwIfNotFound: true);
         m_Controller_Aim = m_Controller.FindAction("Aim", throwIfNotFound: true);
         m_Controller_Shoot = m_Controller.FindAction("Shoot", throwIfNotFound: true);
+        m_Controller_Camera = m_Controller.FindAction("Camera", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -273,6 +294,7 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
     private readonly InputAction m_Controller_Look;
     private readonly InputAction m_Controller_Aim;
     private readonly InputAction m_Controller_Shoot;
+    private readonly InputAction m_Controller_Camera;
     public struct ControllerActions
     {
         private @CharacterInputActions m_Wrapper;
@@ -283,6 +305,7 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
         public InputAction @Look => m_Wrapper.m_Controller_Look;
         public InputAction @Aim => m_Wrapper.m_Controller_Aim;
         public InputAction @Shoot => m_Wrapper.m_Controller_Shoot;
+        public InputAction @Camera => m_Wrapper.m_Controller_Camera;
         public InputActionMap Get() { return m_Wrapper.m_Controller; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -310,6 +333,9 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
             @Shoot.started += instance.OnShoot;
             @Shoot.performed += instance.OnShoot;
             @Shoot.canceled += instance.OnShoot;
+            @Camera.started += instance.OnCamera;
+            @Camera.performed += instance.OnCamera;
+            @Camera.canceled += instance.OnCamera;
         }
 
         private void UnregisterCallbacks(IControllerActions instance)
@@ -332,6 +358,9 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
             @Shoot.started -= instance.OnShoot;
             @Shoot.performed -= instance.OnShoot;
             @Shoot.canceled -= instance.OnShoot;
+            @Camera.started -= instance.OnCamera;
+            @Camera.performed -= instance.OnCamera;
+            @Camera.canceled -= instance.OnCamera;
         }
 
         public void RemoveCallbacks(IControllerActions instance)
@@ -357,5 +386,6 @@ public partial class @CharacterInputActions: IInputActionCollection2, IDisposabl
         void OnLook(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
+        void OnCamera(InputAction.CallbackContext context);
     }
 }

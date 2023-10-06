@@ -12,12 +12,6 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     //Other compoents
     CharacterInputHandler _characterInputHandler;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         if (runner.IsServer)
