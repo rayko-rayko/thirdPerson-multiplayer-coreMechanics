@@ -10,6 +10,8 @@ public class NetworkPlayer : NetworkBehaviour
 {
     public static NetworkPlayer Local { get; set; }
     public Transform playerModel;
+    public Transform cameraTargetFollowPoint;
+    
     
     // Camera mode
     public bool is3rdPersonCamera { get; set; }

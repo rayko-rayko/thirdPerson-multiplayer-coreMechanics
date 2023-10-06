@@ -533,6 +533,10 @@ PrefabInstance:
       propertyPath: m_CameraDistance
       value: 4.25
       objectReference: {fileID: 0}
+    - target: {fileID: 9192859456663529789, guid: c8d79df03591745ceb3f231863398584, type: 3}
+      propertyPath: m_TrackedObjectOffset.y
+      value: 1.24
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

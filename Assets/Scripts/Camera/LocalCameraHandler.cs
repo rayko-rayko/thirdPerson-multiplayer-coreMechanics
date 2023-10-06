@@ -53,8 +53,8 @@ public class LocalCameraHandler : MonoBehaviour
             {
                 if (!_cinemachineVirtualCamera.enabled)
                 {
-                    _cinemachineVirtualCamera.Follow = NetworkPlayer.Local.playerModel;
-                    _cinemachineVirtualCamera.LookAt = NetworkPlayer.Local.playerModel;
+                    _cinemachineVirtualCamera.Follow = NetworkPlayer.Local.cameraTargetFollowPoint;
+                    _cinemachineVirtualCamera.LookAt = NetworkPlayer.Local.cameraTargetFollowPoint;
                     _cinemachineVirtualCamera.enabled = true;
                     
                     Utils.SetRenderLayerInChildren(NetworkPlayer.Local.playerModel, LayerMask.NameToLayer("Default"));
