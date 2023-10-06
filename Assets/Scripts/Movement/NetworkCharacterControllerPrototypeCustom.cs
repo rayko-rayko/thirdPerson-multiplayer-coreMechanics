@@ -16,6 +16,8 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
   public float maxSpeed      = 2.0f;
   public float rotationSpeed = 15.0f;
   public float viewUpDownRotationSpeed = 50.0f;
+  public float moveVelocityY;
+  public float horizontalvelocity;
 
   [Networked]
   [HideInInspector]
@@ -97,10 +99,13 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
     }
 
     moveVelocity.y += gravity * Runner.DeltaTime;
+    moveVelocityY = moveVelocity.y;
 
     var horizontalVel = default(Vector3);
     horizontalVel.x = moveVelocity.x;
     horizontalVel.z = moveVelocity.z;
+    
+    
 
     if (direction == default) {
       horizontalVel = Vector3.Lerp(horizontalVel, default, braking * deltaTime);
@@ -117,7 +122,7 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
     Velocity   = (transform.position - previousPos) * Runner.Simulation.Config.TickRate;
     IsGrounded = Controller.isGrounded;
     
-    Debug.Log(horizontalVel);
+    // Debug.Log(horizontalVel);
   }
 
   public void Rotate(float rotationY)

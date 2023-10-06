@@ -570,6 +570,7 @@ GameObject:
   - component: {fileID: 4100119852037057078}
   - component: {fileID: 604935228400506271}
   - component: {fileID: 4090020050934085020}
+  - component: {fileID: 2766008344638340290}
   m_Layer: 0
   m_Name: NetworkPlayerPF
   m_TagString: Untagged
@@ -660,6 +661,7 @@ MonoBehaviour:
   - {fileID: 4168401342594732461}
   - {fileID: 4100119852037057078}
   - {fileID: 604935228400506271}
+  - {fileID: 2766008344638340290}
   SimulationBehaviours: []
 --- !u!114 &4100119852037057078
 MonoBehaviour:
@@ -696,6 +698,8 @@ MonoBehaviour:
   maxSpeed: 2
   rotationSpeed: 15
   viewUpDownRotationSpeed: 50
+  moveVelocityY: 0
+  horizontalvelocity: 0
   _IsGrounded: 0
   _Velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &604935228400506271
@@ -711,6 +715,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  characterAnimator: {fileID: 4871758380873224026}
+  _isMoving: 0
+  _isRuninng: 0
 --- !u!114 &4090020050934085020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -723,6 +730,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8849f2fef01d941d8956eeb693bf4a12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveInputVector: {x: 0, y: 0}
+--- !u!114 &2766008344638340290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 894837575902713375}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1d2df11369a4c53a49e23ca2c6f972, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  characterAnimator: {fileID: 4871758380873224026}
+  animationSmoothTime: 0.2
 --- !u!1 &895213954610375677
 GameObject:
   m_ObjectHideFlags: 0

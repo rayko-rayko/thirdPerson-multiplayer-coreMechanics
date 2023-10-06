@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 
 public class CharacterInputHandler : MonoBehaviour
 {
-    private Vector2 moveInputVector = Vector2.zero;
+    public Vector2 moveInputVector = Vector2.zero;
     private Vector2 viewInputVector = Vector2.zero;
     private bool _isJumpPressed = false;
     private bool _isRunPressed = false;
