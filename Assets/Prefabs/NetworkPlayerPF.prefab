@@ -619,7 +619,7 @@ CharacterController:
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.0001
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.88, z: 0}
 --- !u!114 &4168401342594732461
 MonoBehaviour:
@@ -662,6 +662,7 @@ MonoBehaviour:
   - {fileID: 4100119852037057078}
   - {fileID: 604935228400506271}
   - {fileID: 2766008344638340290}
+  - {fileID: 2880628865176455611}
   SimulationBehaviours: []
 --- !u!114 &4100119852037057078
 MonoBehaviour:
@@ -696,10 +697,10 @@ MonoBehaviour:
   acceleration: 10
   braking: 10
   maxSpeed: 2
-  rotationSpeed: 15
+  rotationSpeed: 50
   viewUpDownRotationSpeed: 50
-  moveVelocityY: 0
-  horizontalvelocity: 0
+  smoothRotationSpeed: 50
+  moveVelocityY: {x: 0, y: 0, z: 0}
   _IsGrounded: 0
   _Velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &604935228400506271
@@ -715,7 +716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  characterAnimator: {fileID: 4871758380873224026}
+  _camera: {fileID: 5250016484951535994}
   _isMoving: 0
   _isRuninng: 0
 --- !u!114 &4090020050934085020
@@ -731,6 +732,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveInputVector: {x: 0, y: 0}
+  _isJumpPressed: 0
+  _isRunPressed: 0
 --- !u!114 &2766008344638340290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -738,13 +741,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 894837575902713375}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a1d2df11369a4c53a49e23ca2c6f972, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  characterAnimator: {fileID: 4871758380873224026}
   animationSmoothTime: 0.2
 --- !u!1 &895213954610375677
 GameObject:
@@ -2493,8 +2495,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5000723432219606064}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.044163197, y: -0.14566463, z: -0.0065089995, w: 0.98832643}
-  m_LocalPosition: {x: 1.1215146, y: 0.7726999, z: -3.443503}
+  m_LocalRotation: {x: 0.13860434, y: -0.6670949, z: 0.12830716, w: 0.720632}
+  m_LocalPosition: {x: -1.1072946, y: 3.0940962, z: 4.5326476}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3990,6 +3992,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1473169218634368520}
   - component: {fileID: 4871758380873224026}
+  - component: {fileID: 2880628865176455611}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -4035,6 +4038,36 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2880628865176455611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8990233091439116371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  Animator: {fileID: 4871758380873224026}
+  TotalWords: 4
+  SyncSettings: 79
+  FloatAccuracy:
+    _value: 0
+    _inverse: 0
+    _hash: -814817977
+  TimeAccuracy:
+    _value: 0
+    _inverse: 0
+    _hash: 1061325578
+  WeightAccuracy:
+    _value: 0
+    _inverse: 0
+    _hash: -814817977
+  StateHashes: 00000000724b863051fb8596a1f7ab0dbb6691e728a981077af3fe2e3270625b602a1d723164d55f2ac71f931f1b244750188dcd5fd4911610d7389c
+  TriggerHashes: 00000000e67a3208
 --- !u!1 &8991406714802433170
 GameObject:
   m_ObjectHideFlags: 0

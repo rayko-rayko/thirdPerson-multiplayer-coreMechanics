@@ -11,9 +11,9 @@ public class CharacterInputHandler : MonoBehaviour
 {
     public Vector2 moveInputVector = Vector2.zero;
     private Vector2 viewInputVector = Vector2.zero;
-    private bool _isJumpPressed = false;
-    private bool _isRunPressed = false;
-    private bool _isChangeCameraPressed;
+    public bool _isJumpPressed = false;
+    public bool _isRunPressed = false;
+    public bool _isChangeCameraPressed = false;
 
     // Other components
     public static CharacterInputActions characterInputActions;
@@ -33,7 +33,6 @@ public class CharacterInputHandler : MonoBehaviour
     private void Update()
     {
         CharacterMovementInput();
-        ChangeCamera();
     }
 
     void CharacterMovementInput()
@@ -50,20 +49,14 @@ public class CharacterInputHandler : MonoBehaviour
         
         // Run input
         _isRunPressed = characterInputActions.Controller.Run.IsPressed();
-        Debug.Log("inputhandler "+ _isRunPressed);
+        
+        // Change Camera input
+        _isChangeCameraPressed = characterInputActions.Controller.Camera.triggered;
         
         // Set view input
         _localCameraHandler.SetViewInputVector(viewInputVector);
     }
-    void ChangeCamera()
-    {
-        // Change Camera input
-        _isChangeCameraPressed = characterInputActions.Controller.Camera.triggered;
-        if (_isChangeCameraPressed)
-        {
-            NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera;
-        }
-    }
+    
 
     public NetworkInputData GetNetworkInput()
     {
@@ -80,6 +73,9 @@ public class CharacterInputHandler : MonoBehaviour
         
         // Run data
         networkInputData.Buttons.Set(NetworkInputData.BUTTON_RUN, characterInputActions.Controller.Run.IsPressed());
+        
+        // Change Camera data
+        networkInputData.Buttons.Set(NetworkInputData.BUTTON_CHANGE_CAMERA, characterInputActions.Controller.Camera.triggered);
         
         // Reset variable
         _isJumpPressed = false;

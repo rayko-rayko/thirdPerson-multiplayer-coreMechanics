@@ -9,21 +9,17 @@ using UnityEngine.InputSystem;
 
 public class CharacterMovementHandler : NetworkBehaviour
 {
-    [Header("Animation")] 
-    public Animator characterAnimator;
-    
+    [SerializeField] private Camera _camera;
     public bool isJumping { get; private set; }
     [Networked] public bool isMoving { get; private set; }
     [Networked] public bool isRuninng { get; private set; }
     
     // Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
-    private CharacterInputHandler _characterInputHandler;
 
     private void Awake()
     {
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
-        _characterInputHandler = GetComponent<CharacterInputHandler>();
     }
 
     public override void FixedUpdateNetwork()
@@ -42,6 +38,7 @@ public class CharacterMovementHandler : NetworkBehaviour
             // -------------------------------Move-----------------------------------------
             Vector3 moveDirection = transform.forward * networkInputData.movementInput.y + transform.right * networkInputData.movementInput.x;
             moveDirection.Normalize();
+
             _networkCharacterControllerPrototypeCustom.Move(moveDirection);
 
             if (networkInputData.movementInput != Vector2.zero) isMoving = true;
@@ -54,16 +51,16 @@ public class CharacterMovementHandler : NetworkBehaviour
             if (networkInputData.IsDown(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 10; isRuninng = true; }
             else if (networkInputData.IsUp(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 2; isRuninng = false; }
             
-            // // -------------------------------Animation-------------------------------------
-            // Vector2 velocityVector = new Vector3(_characterInputHandler.moveInputVector.x * _networkCharacterControllerPrototypeCustom.maxSpeed, _characterInputHandler.moveInputVector.y * _networkCharacterControllerPrototypeCustom.maxSpeed);
-            // velocityVector.Normalize();
-            //
-            // Debug.Log(_networkCharacterControllerPrototypeCustom.maxSpeed + " velocity vector movement handler ");
-            //
-            // characterAnimator.SetFloat("MoveX", velocityVector.x);
-            // characterAnimator.SetFloat("MoveZ", velocityVector.y);
-            // characterAnimator.SetFloat("SpeedY", _networkCharacterControllerPrototypeCustom.moveVelocityY);
+            //change camera
+            if (networkInputData.IsDown(NetworkInputData.BUTTON_CHANGE_CAMERA)) { NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera; }
+            // else if (networkInputData.IsUp(NetworkInputData.BUTTON_CHANGE_CAMERA)) { NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera; }
             
+            
+            /* // -------------------------------Animation-------------------------------------
+            characterAnimator.SetFloat("MoveX", _characterInputHandler.moveInputVector.x);
+            characterAnimator.SetFloat("MoveZ", _characterInputHandler.moveInputVector.y);
+            characterAnimator.SetFloat("SpeedY", _networkCharacterControllerPrototypeCustom.moveVelocityY.y);
+            */
             
             // Check if we have fallen off the world
             CheckFallRespawn();

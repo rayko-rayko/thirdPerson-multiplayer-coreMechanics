@@ -16,8 +16,8 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
   public float maxSpeed      = 2.0f;
   public float rotationSpeed = 15.0f;
   public float viewUpDownRotationSpeed = 50.0f;
-  public float moveVelocityY;
-  public float horizontalvelocity;
+  public float smoothRotationSpeed = 50f;
+  public Vector3 moveVelocityY;
 
   [Networked]
   [HideInInspector]
@@ -99,19 +99,20 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
     }
 
     moveVelocity.y += gravity * Runner.DeltaTime;
-    moveVelocityY = moveVelocity.y;
+    moveVelocityY.y = moveVelocity.y;
 
     var horizontalVel = default(Vector3);
     horizontalVel.x = moveVelocity.x;
     horizontalVel.z = moveVelocity.z;
     
-    
 
     if (direction == default) {
       horizontalVel = Vector3.Lerp(horizontalVel, default, braking * deltaTime);
     } else {
-      horizontalVel      = Vector3.ClampMagnitude(horizontalVel + direction * acceleration * deltaTime, maxSpeed);
-      //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Runner.DeltaTime);
+      horizontalVel = Vector3.ClampMagnitude(horizontalVel + direction * acceleration * deltaTime, maxSpeed);
+      
+      Quaternion targetRotation = Quaternion.LookRotation(direction);
+      transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, smoothRotationSpeed * Runner.DeltaTime);
     }
 
     moveVelocity.x = horizontalVel.x;
