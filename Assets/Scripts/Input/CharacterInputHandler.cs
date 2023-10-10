@@ -6,22 +6,26 @@ using Fusion;
 using Fusion.Sockets;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class CharacterInputHandler : MonoBehaviour
 {
     public Vector2 moveInputVector = Vector2.zero;
     private Vector2 viewInputVector = Vector2.zero;
-    public bool _isJumpPressed = false;
-    public bool _isRunPressed = false;
-    public bool _isChangeCameraPressed = false;
+    public bool isJumpPressed = false;
+    public bool isRunPressed = false;
+    public bool isChangeCameraPressed = false;
+    public bool isFirePressed = false; 
 
     // Other components
     public static CharacterInputActions characterInputActions;
     private LocalCameraHandler _localCameraHandler;
+    private CharacterMovementHandler _characterMovementHandler;
 
     private void Awake()
     {
         _localCameraHandler = GetComponentInChildren<LocalCameraHandler>();
+        _characterMovementHandler = GetComponent<CharacterMovementHandler>();
     }
 
     private void Start()
@@ -37,6 +41,8 @@ public class CharacterInputHandler : MonoBehaviour
 
     void CharacterMovementInput()
     {
+        if (!_characterMovementHandler.Object.HasInputAuthority) { return; }
+        
         // Move input
         moveInputVector = characterInputActions.Controller.Movement.ReadValue<Vector2>();
         
@@ -45,13 +51,16 @@ public class CharacterInputHandler : MonoBehaviour
         viewInputVector.y = characterInputActions.Controller.Look.ReadValue<Vector2>().y * -1;
         
         // Jump input
-        _isJumpPressed = characterInputActions.Controller.Jump.triggered;
+        isJumpPressed = characterInputActions.Controller.Jump.triggered;
         
         // Run input
-        _isRunPressed = characterInputActions.Controller.Run.IsPressed();
+        isRunPressed = characterInputActions.Controller.Run.IsPressed();
         
         // Change Camera input
-        _isChangeCameraPressed = characterInputActions.Controller.Camera.triggered;
+        isChangeCameraPressed = characterInputActions.Controller.Camera.triggered;
+        
+        // Fire input
+        isFirePressed = characterInputActions.Controller.Shoot.triggered;
         
         // Set view input
         _localCameraHandler.SetViewInputVector(viewInputVector);
@@ -69,7 +78,7 @@ public class CharacterInputHandler : MonoBehaviour
         networkInputData.aimForwardVector = _localCameraHandler.transform.forward;
         
         // Jump data
-        networkInputData.isJumpPressed = _isJumpPressed;
+        networkInputData.isJumpPressed = isJumpPressed;
         
         // Run data
         networkInputData.Buttons.Set(NetworkInputData.BUTTON_RUN, characterInputActions.Controller.Run.IsPressed());
@@ -77,9 +86,13 @@ public class CharacterInputHandler : MonoBehaviour
         // Change Camera data
         networkInputData.Buttons.Set(NetworkInputData.BUTTON_CHANGE_CAMERA, characterInputActions.Controller.Camera.triggered);
         
+        // Fire data
+        networkInputData.isFirePressed = characterInputActions.Controller.Shoot.triggered;
+        
         // Reset variable
-        _isJumpPressed = false;
-        _isRunPressed = false;
+        isJumpPressed = false;
+        isRunPressed = false;
+        isFirePressed = false;
         
         return networkInputData;
     }

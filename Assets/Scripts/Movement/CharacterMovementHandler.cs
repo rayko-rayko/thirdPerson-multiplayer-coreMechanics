@@ -9,6 +9,8 @@ using UnityEngine.InputSystem;
 
 public class CharacterMovementHandler : NetworkBehaviour
 {
+    private bool _isRespawnRequested = false;
+    
     [SerializeField] private Camera _camera;
     public bool isJumping { get; private set; }
     [Networked] public bool isMoving { get; private set; }
@@ -16,14 +18,26 @@ public class CharacterMovementHandler : NetworkBehaviour
     
     // Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
+    private HPHandler _hpHandler;
 
     private void Awake()
     {
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
+        _hpHandler = GetComponent<HPHandler>();
     }
 
     public override void FixedUpdateNetwork()
     {
+        if (Object.HasStateAuthority)
+        {
+            if (_isRespawnRequested)
+            {
+                Respawn();
+                return;
+            }
+            if (_hpHandler.isDead) { return;}
+        }
+        
         // Get the input from the network
         if (GetInput(out NetworkInputData networkInputData))
         {
@@ -43,18 +57,17 @@ public class CharacterMovementHandler : NetworkBehaviour
 
             if (networkInputData.movementInput != Vector2.zero) isMoving = true;
             else isMoving = false;
+            networkInputData.isMovementPressed = isMoving;
             
             // -------------------------------Jump-----------------------------------------
             if (networkInputData.isJumpPressed) { _networkCharacterControllerPrototypeCustom.Jump(); }
             
-            // -------------------------------Run------------------------------------------
-            if (networkInputData.IsDown(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 10; isRuninng = true; }
-            else if (networkInputData.IsUp(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 2; isRuninng = false; }
+            // --------------------------------Run-----------------------------------------
+            if (networkInputData.IsDown(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 8; isRuninng = true; }
+            else if (networkInputData.IsUp(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 3; isRuninng = false; }
             
-            //change camera
+            // ----------------------------Change-Camera------------------------------------
             if (networkInputData.IsDown(NetworkInputData.BUTTON_CHANGE_CAMERA)) { NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera; }
-            // else if (networkInputData.IsUp(NetworkInputData.BUTTON_CHANGE_CAMERA)) { NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera; }
-            
             
             /* // -------------------------------Animation-------------------------------------
             characterAnimator.SetFloat("MoveX", _characterInputHandler.moveInputVector.x);
@@ -66,11 +79,28 @@ public class CharacterMovementHandler : NetworkBehaviour
             CheckFallRespawn();
         }
     }
+    
     void CheckFallRespawn()
     {
         if (transform.position.y < -12)
         {
-            transform.position = Utils.GetRandomSpawnPoint();
+            if (Object.HasStateAuthority)
+            {
+                Debug.Log($"{Time.time} Respawn due to fall outside of map at position {transform.position}");
+                Respawn();
+            }
         }
+    }
+
+    public void RequestRespawn() { _isRespawnRequested = true; }
+    void Respawn()
+    {
+        _networkCharacterControllerPrototypeCustom.TeleportToPosition(Utils.GetRandomSpawnPoint());
+        _hpHandler.OnRespawned();
+        _isRespawnRequested = false;
+    }
+    public void SetCharacterControllerEnabled(bool isEnabled)
+    {
+        _networkCharacterControllerPrototypeCustom.Controller.enabled = isEnabled;
     }
 }

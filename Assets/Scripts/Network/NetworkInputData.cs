@@ -9,11 +9,12 @@ public struct NetworkInputData : INetworkInput
     public Vector3 aimForwardVector;
     public NetworkBool isMovementPressed;
     public NetworkBool isJumpPressed;
-    public NetworkBool isChangeCameraPressed;
+    public NetworkBool isFirePressed;
     
     public NetworkButtons Buttons;
     public const int BUTTON_RUN = 0;
     public const int BUTTON_CHANGE_CAMERA = 1;
+    public const int BUTTON_FIRE = 2;
     
     public bool IsUp(int button) { return Buttons.IsSet(button) == false; }
     

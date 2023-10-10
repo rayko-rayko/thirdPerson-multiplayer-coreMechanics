@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4205067522405741484}
   - component: {fileID: 6677560887190409413}
   - component: {fileID: 435121740540941396}
-  - component: {fileID: 4928468031323019677}
+  - component: {fileID: 9075629812317692563}
   m_Layer: 0
-  m_Name: Particle System Deah
+  m_Name: Particle System Death
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4845,7 +4845,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f2bb97965de454292846907a3bf88e12, type: 2}
+  - {fileID: 2100000, guid: b2050aff6c0f142268fbfc2d17f08a35, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4896,7 +4896,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &4928468031323019677
+--- !u!114 &9075629812317692563
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4905,7 +4905,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6330475949670828996}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1ec20d3f077941d19533febfd6c9723, type: 3}
+  m_Script: {fileID: 11500000, guid: 4fc58408419cf4ae7a28a7f9cba503ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lifeTime: 1.5

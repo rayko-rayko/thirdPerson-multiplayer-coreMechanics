@@ -50,7 +50,7 @@ public class CharacterAnimation : NetworkBehaviour
     
     void IsRunAnimation()
     {
-        if (_characterMovementHandler.isMoving && _characterInputHandler._isRunPressed)
+        if (_characterMovementHandler.isMoving && _characterInputHandler.isRunPressed)
         {
             Debug.Log("if");
             float targetY = 5f;

@@ -21,11 +21,18 @@ public class NetworkPlayer : NetworkBehaviour
         if (Object.HasInputAuthority)
         {
             Local = this;
-            // Sets the layer of the local palyers model
+            // Sets the layer of the local plyers model
             Utils.SetRenderLayerInChildren(playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
             
             // Disable main camera
-            Camera.main.gameObject.SetActive(false);
+            if (Camera.main != null)
+            {
+                Camera.main.gameObject.SetActive(false);
+            }
+            
+            // Enable 1 audio listener
+            AudioListener audioListener = GetComponentInChildren<AudioListener>(true);
+            audioListener.enabled = true;
 
             Debug.Log("Spawned local player");
         }
@@ -42,6 +49,9 @@ public class NetworkPlayer : NetworkBehaviour
             Debug.Log("Spawned remote player");
             
         }
+        // Set the player as a player object
+        Runner.SetPlayerObject(Object.InputAuthority, Object);
+        
         //Make it easier to tell which player is which.
         transform.name = $"P_{Object.Id}";
     }

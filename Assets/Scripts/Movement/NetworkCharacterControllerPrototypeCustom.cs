@@ -7,7 +7,10 @@ using UnityEngine.UIElements;
 [OrderBefore(typeof(NetworkTransform))]
 [DisallowMultipleComponent]
 // ReSharper disable once CheckNamespace
-public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
+public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
+{
+  private LocalCameraHandler _localCameraHandler;
+  
   [Header("Character Controller Settings")]
   public float gravity       = -20.0f;
   public float jumpImpulse   = 8.0f;
@@ -44,6 +47,7 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
   protected override void Awake() {
     base.Awake();
     CacheController();
+    _localCameraHandler = GetComponentInParent<LocalCameraHandler>();
   }
 
   public override void Spawned() {
@@ -112,7 +116,10 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform {
       horizontalVel = Vector3.ClampMagnitude(horizontalVel + direction * acceleration * deltaTime, maxSpeed);
       
       Quaternion targetRotation = Quaternion.LookRotation(direction);
-      transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, smoothRotationSpeed * Runner.DeltaTime);
+      if (NetworkPlayer.Local.is3rdPersonCamera)
+      {
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, smoothRotationSpeed * Runner.DeltaTime);
+      }
     }
 
     moveVelocity.x = horizontalVel.x;
