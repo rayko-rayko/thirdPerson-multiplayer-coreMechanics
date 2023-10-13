@@ -5,27 +5,61 @@ using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEngine.InputSystem;
 
 public class CharacterMovementHandler : NetworkBehaviour
 {
     private bool _isRespawnRequested = false;
-    
-    [SerializeField] private Camera _camera;
     public bool isJumping { get; private set; }
     [Networked] public bool isMoving { get; private set; }
+    [Networked] public Vector3 movementDirection { get; private set; }
     [Networked] public bool isRuninng { get; private set; }
-    
+
     // Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
+    private CharacterInputHandler _characterInputHandler;
+    public Animator _animator;
     private HPHandler _hpHandler;
-
+    
+    public enum MovementType
+    {
+        Idle,
+        Walk,
+        Run
+    };
+    
     private void Awake()
     {
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
+        _characterInputHandler = GetComponent<CharacterInputHandler>();
+        _animator = GetComponentInChildren<Animator>();
         _hpHandler = GetComponent<HPHandler>();
     }
 
+    private void Update()
+    {
+        ChangeCamera();
+    }
+
+    void ChangeCamera()
+    {
+        if (_characterInputHandler.isChangeCameraPressed)
+        {
+            NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera;
+            if (NetworkPlayer.Local.is3rdPersonCamera)
+            {
+                NetworkPlayer.Local.isFPSCamera = false;
+            }
+            else if (!NetworkPlayer.Local.is3rdPersonCamera)
+            {
+                NetworkPlayer.Local.isFPSCamera = true;
+            }
+        }
+        
+        Debug.Log($"is3rdPerson : {NetworkPlayer.Local.is3rdPersonCamera}, isFPSCamera : {NetworkPlayer.Local.isFPSCamera}");
+    }
+    
     public override void FixedUpdateNetwork()
     {
         if (Object.HasStateAuthority)
@@ -37,8 +71,10 @@ public class CharacterMovementHandler : NetworkBehaviour
             }
             if (_hpHandler.isDead) { return;}
         }
-        
+
+        Vector3 direction;
         // Get the input from the network
+        
         if (GetInput(out NetworkInputData networkInputData))
         {
             // ---------Rotate the transform according to the client aim vector------------
@@ -50,34 +86,28 @@ public class CharacterMovementHandler : NetworkBehaviour
             transform.rotation = rotation;
             
             // -------------------------------Move-----------------------------------------
-            Vector3 moveDirection = transform.forward * networkInputData.movementInput.y + transform.right * networkInputData.movementInput.x;
-            moveDirection.Normalize();
+            
+            direction = default;
+            direction = transform.forward * networkInputData.movementInput.y + transform.right * networkInputData.movementInput.x;
+            direction.Normalize();
 
-            _networkCharacterControllerPrototypeCustom.Move(moveDirection);
-
-            if (networkInputData.movementInput != Vector2.zero) isMoving = true;
-            else isMoving = false;
-            networkInputData.isMovementPressed = isMoving;
+            movementDirection = direction; 
+            _networkCharacterControllerPrototypeCustom.Move(movementDirection);
             
             // -------------------------------Jump-----------------------------------------
-            if (networkInputData.isJumpPressed) { _networkCharacterControllerPrototypeCustom.Jump(); }
+            if (networkInputData.isJumpPressed) { _networkCharacterControllerPrototypeCustom.Jump(); isJumping = true; }
             
             // --------------------------------Run-----------------------------------------
             if (networkInputData.IsDown(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 8; isRuninng = true; }
             else if (networkInputData.IsUp(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 3; isRuninng = false; }
             
-            // ----------------------------Change-Camera------------------------------------
-            if (networkInputData.IsDown(NetworkInputData.BUTTON_CHANGE_CAMERA)) { NetworkPlayer.Local.is3rdPersonCamera = !NetworkPlayer.Local.is3rdPersonCamera; }
-            
-            /* // -------------------------------Animation-------------------------------------
-            characterAnimator.SetFloat("MoveX", _characterInputHandler.moveInputVector.x);
-            characterAnimator.SetFloat("MoveZ", _characterInputHandler.moveInputVector.y);
-            characterAnimator.SetFloat("SpeedY", _networkCharacterControllerPrototypeCustom.moveVelocityY.y);
-            */
-            
             // Check if we have fallen off the world
             CheckFallRespawn();
         }
+        
+        if (networkInputData.movementInput == Vector2.zero) { isMoving = false; }
+        else { isMoving = true; }
+        networkInputData.isMovementPressed = isMoving;
     }
     
     void CheckFallRespawn()

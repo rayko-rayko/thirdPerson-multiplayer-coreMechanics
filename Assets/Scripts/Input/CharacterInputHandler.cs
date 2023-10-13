@@ -10,7 +10,7 @@ using UnityEngine.Serialization;
 
 public class CharacterInputHandler : MonoBehaviour
 {
-    public Vector2 moveInputVector = Vector2.zero;
+    public Vector2 moveInputVector { get; set; }
     private Vector2 viewInputVector = Vector2.zero;
     public bool isJumpPressed = false;
     public bool isRunPressed = false;
@@ -66,7 +66,6 @@ public class CharacterInputHandler : MonoBehaviour
         _localCameraHandler.SetViewInputVector(viewInputVector);
     }
     
-
     public NetworkInputData GetNetworkInput()
     {
         NetworkInputData networkInputData = new NetworkInputData();
@@ -84,7 +83,7 @@ public class CharacterInputHandler : MonoBehaviour
         networkInputData.Buttons.Set(NetworkInputData.BUTTON_RUN, characterInputActions.Controller.Run.IsPressed());
         
         // Change Camera data
-        networkInputData.Buttons.Set(NetworkInputData.BUTTON_CHANGE_CAMERA, characterInputActions.Controller.Camera.triggered);
+        // networkInputData.Buttons.Set(NetworkInputData.BUTTON_CHANGE_CAMERA, characterInputActions.Controller.Camera.triggered);
         
         // Fire data
         networkInputData.isFirePressed = characterInputActions.Controller.Shoot.triggered;
@@ -96,7 +95,6 @@ public class CharacterInputHandler : MonoBehaviour
         
         return networkInputData;
     }
-
     
     private void OnEnable()
     {

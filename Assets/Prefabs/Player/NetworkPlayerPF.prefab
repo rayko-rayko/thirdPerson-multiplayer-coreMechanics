@@ -639,9 +639,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _camera: {fileID: 5250016484951535994}
   _isMoving: 0
+  _movementDirection: {x: 0, y: 0, z: 0}
   _isRuninng: 0
+  _animator: {fileID: 0}
 --- !u!114 &4090020050934085020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -654,7 +655,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8849f2fef01d941d8956eeb693bf4a12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveInputVector: {x: 0, y: 0}
   isJumpPressed: 0
   isRunPressed: 0
   isChangeCameraPressed: 0

@@ -62,7 +62,7 @@ public class LocalCameraHandler : MonoBehaviour
                 // Let the camerae be handled by cinemachine
                 return;
             }
-            else
+            else if (NetworkPlayer.Local.isFPSCamera)
             {
                 if (_cinemachineVirtualCamera.enabled)
                 {

@@ -15,7 +15,14 @@ public class NetworkPlayer : NetworkBehaviour
     
     // Camera mode
     public bool is3rdPersonCamera { get; set; }
-    
+    public bool isFPSCamera { get; set; }
+
+    private void Start()
+    {
+        isFPSCamera = true;
+        is3rdPersonCamera = false;
+    }
+
     public override void Spawned()
     {
         if (Object.HasInputAuthority)

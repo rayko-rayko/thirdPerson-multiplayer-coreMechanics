@@ -10,9 +10,11 @@ using UnityEngine.Serialization;
 public class CharacterAnimation : NetworkBehaviour
 {
     private Vector2 _inputMovement;
+    
     #region Animation
     
     private Animator _playerAnimator;
+    private NetworkMecanimAnimator _mecanimAnimator;
     [SerializeField] private float animationSmoothTime = 0.2f;
 
     private int moveXAnimationParameterId, moveZAnimationParameterId, speedYAnimationParameterId;
@@ -25,10 +27,11 @@ public class CharacterAnimation : NetworkBehaviour
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
     private NetworkInputData _networkInputData;
     private CharacterMovementHandler _characterMovementHandler;
-
+    
     private void Awake()
     {
         _playerAnimator = GetComponentInChildren<Animator>();
+        _mecanimAnimator = GetComponentInChildren<NetworkMecanimAnimator>();
         _characterInputHandler = GetComponent<CharacterInputHandler>();
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
         _characterMovementHandler = GetComponent<CharacterMovementHandler>();
@@ -41,33 +44,36 @@ public class CharacterAnimation : NetworkBehaviour
     }
     private void Update()
     {
+       
     }
-    private void FixedUpdate()
+    public override void FixedUpdateNetwork()
     {
-        IsRunAnimation();
         SetAnimation();
     }
     
-    void IsRunAnimation()
-    {
-        if (_characterMovementHandler.isMoving && _characterInputHandler.isRunPressed)
-        {
-            Debug.Log("if");
-            float targetY = 5f;
-            currentAnimationBlendVector.y = Mathf.SmoothDamp(currentAnimationBlendVector.y, targetY, ref animationVelocity.y, animationSmoothTime);
-        }
-    }
     void SetAnimation()
     {
-        currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, _characterInputHandler.moveInputVector, ref animationVelocity, animationSmoothTime);
-        
-        _playerAnimator.SetFloat(moveXAnimationParameterId, currentAnimationBlendVector.x);
-        _playerAnimator.SetFloat(moveZAnimationParameterId, currentAnimationBlendVector.y);
-        _playerAnimator.SetFloat(speedYAnimationParameterId, _networkCharacterControllerPrototypeCustom.moveVelocityY.y );
-
-        if (_networkCharacterControllerPrototypeCustom.IsGrounded)
+        if (GetInput(out NetworkInputData networkInputData))
         {
-            _playerAnimator.SetTrigger("Land");
+            if (networkInputData.movementInput != Vector2.zero && networkInputData.IsDown(NetworkInputData.BUTTON_RUN))
+            {
+                float targetY = 5f;
+                currentAnimationBlendVector.y = Mathf.SmoothDamp(currentAnimationBlendVector.y, targetY, ref animationVelocity.y, animationSmoothTime);
+            }
+            
+            currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, networkInputData.movementInput, ref animationVelocity, animationSmoothTime);
+            
+            _mecanimAnimator.Animator.SetFloat(moveXAnimationParameterId, currentAnimationBlendVector.x);
+            _mecanimAnimator.Animator.SetFloat(moveZAnimationParameterId, currentAnimationBlendVector.y);
+            
+            _playerAnimator.SetFloat(speedYAnimationParameterId, _networkCharacterControllerPrototypeCustom.moveVelocityY.y );
+            
+            if (_networkCharacterControllerPrototypeCustom.IsGrounded)
+            {
+                _mecanimAnimator.SetTrigger("Land");
+            }
         }
+        
+            
     }
 }
