@@ -21,21 +21,27 @@ public class HPHandler : NetworkBehaviour
     public GameObject playerModel;
     public GameObject deathGameObjectPrefab;
     
+    public bool skipSettingStartValues = false;
+    
     // Other components
     private HitboxRoot _hitboxRoot;
     private CharacterMovementHandler _characterMovementHandler;
+    private NetworkInGameMessages _networkInGameMessages;
+    private NetworkPlayer _networkPlayer;
 
     private void Awake()
     {
         _hitboxRoot = GetComponent<HitboxRoot>();
         _characterMovementHandler = GetComponent<CharacterMovementHandler>();
+        _networkInGameMessages = GetComponent<NetworkInGameMessages>();
+        _networkPlayer = GetComponent<NetworkPlayer>();
     }
 
     private void Start()
     {
-        _HP = _startingHP;
-        isDead = false;
-
+        if (!skipSettingStartValues) 
+        { _HP = _startingHP; isDead = false; }
+        
         _isInitialized = true;
     }
 
@@ -43,7 +49,7 @@ public class HPHandler : NetworkBehaviour
     {
         if (Object.HasInputAuthority) { uiOnHitImage.color = uiOnHitColor;}
 
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(.2f);
         
         if (Object.HasInputAuthority && !isDead) { uiOnHitImage.color = new Color(0, 0, 0, 0); }
     }
@@ -54,16 +60,33 @@ public class HPHandler : NetworkBehaviour
         _characterMovementHandler.RequestRespawn();
     }
 
-    public void OnTakeDamage()
+    // This function only called on the server
+    public void OnTakeDamage(string damageCausedByPlayerNickname, byte damage)
     {
-        if (isDead) { return; }
-        _HP -= 1;
+        // Only take damage while alive
+        if (isDead)
+        {
+            return;
+        }
+
+        if (damage > _HP)
+        {
+            damage = _HP;
+        }
+        
+        _HP -= damage;
+        
         Debug.Log($"{Time.time} {transform.name} took damage got {_HP} left");
 
+        // Player killed
         if (_HP <= 0)
         {
+            _networkInGameMessages.SendInGameRPCMessage(damageCausedByPlayerNickname, $"Killed <b>{_networkPlayer.playerNickName.ToString()}<b>");
+            
             Debug.Log($"{Time.time} {transform.name} died");
+
             StartCoroutine(ServerReviveCO());
+            
             isDead = true;
         }
     }

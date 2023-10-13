@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
-using Fusion.Sockets;
-using Unity.VisualScripting;
-using UnityEditorInternal;
-using UnityEngine.InputSystem;
 
 public class CharacterMovementHandler : NetworkBehaviour
 {

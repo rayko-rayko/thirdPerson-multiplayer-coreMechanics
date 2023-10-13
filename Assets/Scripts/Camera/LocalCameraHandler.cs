@@ -7,7 +7,7 @@ using Cinemachine;
 
 public class LocalCameraHandler : MonoBehaviour
 {
-    private Camera _localCamera;
+    public Camera _localCamera;
     public Transform cameraAnchorPoint;
 
     // Input
@@ -29,11 +29,13 @@ public class LocalCameraHandler : MonoBehaviour
 
     private void Start()
     {
-        // Detach camera if enabled
-        if (_localCamera.enabled)
-        {
-            _localCamera.transform.parent = null;
-        }
+        // // Detach camera if enabled
+        // if (_localCamera.enabled)
+        // {
+        //     _localCamera.transform.parent = null;
+        // }
+        _cameraRotationX = GameManager.instance.cameraViewRotation.x;
+        _cameraRotationY = GameManager.instance.cameraViewRotation.y;
     }
 
     private void LateUpdate()
@@ -90,5 +92,13 @@ public class LocalCameraHandler : MonoBehaviour
     public void SetViewInputVector(Vector2 viewInput)
     {
         this.viewInput = viewInput;
+    }
+    private void OnDestroy()
+    {
+        if (_cameraRotationX != 0 && _cameraRotationY != 0)
+        {
+            GameManager.instance.cameraViewRotation.x = _cameraRotationX;
+            GameManager.instance.cameraViewRotation.y = _cameraRotationY;
+        }
     }
 }
