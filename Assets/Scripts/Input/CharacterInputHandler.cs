@@ -41,7 +41,11 @@ public class CharacterInputHandler : MonoBehaviour
 
     void CharacterMovementInput()
     {
-        if (!_characterMovementHandler.Object.HasInputAuthority) { return; }
+        if (!_characterMovementHandler.Object.HasInputAuthority)
+        {
+            Debug.Log($"characterinputhandler : hasinputauthority  false {transform.name}");
+            return;
+        }
         
         // Move input
         moveInputVector = characterInputActions.Controller.Movement.ReadValue<Vector2>();
@@ -64,6 +68,8 @@ public class CharacterInputHandler : MonoBehaviour
         
         // Set view input
         _localCameraHandler.SetViewInputVector(viewInputVector);
+        
+        Debug.Log($"{moveInputVector} --> moveinputvector, {isJumpPressed} --> isjump from {gameObject.name}");
     }
     
     public NetworkInputData GetNetworkInput()
@@ -81,9 +87,6 @@ public class CharacterInputHandler : MonoBehaviour
         
         // Run data
         networkInputData.Buttons.Set(NetworkInputData.BUTTON_RUN, characterInputActions.Controller.Run.IsPressed());
-        
-        // Change Camera data
-        // networkInputData.Buttons.Set(NetworkInputData.BUTTON_CHANGE_CAMERA, characterInputActions.Controller.Camera.triggered);
         
         // Fire data
         networkInputData.isFirePressed = characterInputActions.Controller.Shoot.triggered;
