@@ -15,21 +15,12 @@ public class CharacterMovementHandler : NetworkBehaviour
     // Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
     private CharacterInputHandler _characterInputHandler;
-    public Animator _animator;
     private HPHandler _hpHandler;
-    
-    public enum MovementType
-    {
-        Idle,
-        Walk,
-        Run
-    };
     
     private void Awake()
     {
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
         _characterInputHandler = GetComponent<CharacterInputHandler>();
-        _animator = GetComponentInChildren<Animator>();
         _hpHandler = GetComponent<HPHandler>();
     }
 
@@ -52,8 +43,6 @@ public class CharacterMovementHandler : NetworkBehaviour
                 NetworkPlayer.Local.isFPSCamera = true;
             }
         }
-        
-        Debug.Log($"is3rdPerson : {NetworkPlayer.Local.is3rdPersonCamera}, isFPSCamera : {NetworkPlayer.Local.isFPSCamera}");
     }
     
     public override void FixedUpdateNetwork()

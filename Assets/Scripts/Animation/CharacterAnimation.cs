@@ -9,11 +9,8 @@ using UnityEngine.Serialization;
 
 public class CharacterAnimation : NetworkBehaviour
 {
-    private Vector2 _inputMovement;
-    
     #region Animation
     
-    private Animator _playerAnimator;
     private NetworkMecanimAnimator _mecanimAnimator;
     [SerializeField] private float animationSmoothTime = 0.2f;
 
@@ -23,18 +20,13 @@ public class CharacterAnimation : NetworkBehaviour
     #endregion
 
     // Other components
-    private CharacterInputHandler _characterInputHandler;
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
     private NetworkInputData _networkInputData;
-    private CharacterMovementHandler _characterMovementHandler;
     
     private void Awake()
     {
-        _playerAnimator = GetComponentInChildren<Animator>();
         _mecanimAnimator = GetComponentInChildren<NetworkMecanimAnimator>();
-        _characterInputHandler = GetComponent<CharacterInputHandler>();
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
-        _characterMovementHandler = GetComponent<CharacterMovementHandler>();
     }
     private void Start()
     {
@@ -42,10 +34,7 @@ public class CharacterAnimation : NetworkBehaviour
         moveZAnimationParameterId = Animator.StringToHash("MoveZ");
         speedYAnimationParameterId = Animator.StringToHash("SpeedY");
     }
-    private void Update()
-    {
-       
-    }
+    
     public override void FixedUpdateNetwork()
     {
         SetAnimation();
@@ -66,7 +55,7 @@ public class CharacterAnimation : NetworkBehaviour
             _mecanimAnimator.Animator.SetFloat(moveXAnimationParameterId, currentAnimationBlendVector.x);
             _mecanimAnimator.Animator.SetFloat(moveZAnimationParameterId, currentAnimationBlendVector.y);
             
-            _playerAnimator.SetFloat(speedYAnimationParameterId, _networkCharacterControllerPrototypeCustom.moveVelocityY.y );
+            _mecanimAnimator.Animator.SetFloat(speedYAnimationParameterId, _networkCharacterControllerPrototypeCustom.moveVelocityY.y );
             
             if (_networkCharacterControllerPrototypeCustom.IsGrounded)
             {

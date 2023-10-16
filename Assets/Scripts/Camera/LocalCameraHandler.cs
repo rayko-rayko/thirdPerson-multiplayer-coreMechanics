@@ -29,11 +29,6 @@ public class LocalCameraHandler : MonoBehaviour
 
     private void Start()
     {
-        // // Detach camera if enabled
-        // if (_localCamera.enabled)
-        // {
-        //     _localCamera.transform.parent = null;
-        // }
         _cameraRotationX = GameManager.instance.cameraViewRotation.x;
         _cameraRotationY = GameManager.instance.cameraViewRotation.y;
     }

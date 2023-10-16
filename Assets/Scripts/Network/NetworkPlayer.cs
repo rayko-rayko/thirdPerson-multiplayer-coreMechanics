@@ -6,8 +6,9 @@ using Fusion.Sockets;
 using System;
 using UnityEngine.Diagnostics;
 using TMPro;
+using UnityEngine.SceneManagement;
 
-public class NetworkPlayer : NetworkBehaviour
+public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
 {
     public TextMeshProUGUI playerNickNameTM;
     
@@ -70,15 +71,12 @@ public class NetworkPlayer : NetworkBehaviour
             localUI.SetActive(true);
             
             RPC_SetNickName(GameManager.instance.playerNickname);
+            playerNickNameTM.gameObject.SetActive(false);
 
             Debug.Log("Spawned local player");
         }
         else
         {
-            // // Disable the camera if we are not the local player
-            // Camera localCamera = GetComponentInChildren<Camera>();
-            // localCamera.enabled = false;
-            
             // Disable the local camera for remote players
             localCameraHandler._localCamera.enabled = false;
             
@@ -107,7 +105,6 @@ public class NetworkPlayer : NetworkBehaviour
             {
                 if (playerLeftNetworkObject == Object)
                 {
-                    //_networkInGameMessages.SendInGameRPCMessage(playerNickName.ToString(), "left");
                     Local.GetComponent<NetworkInGameMessages>().SendInGameRPCMessage(playerLeftNetworkObject.GetComponent<NetworkPlayer>().playerNickName.ToString(), "left");
                 }
             }
@@ -154,6 +151,27 @@ public class NetworkPlayer : NetworkBehaviour
         if (localCameraHandler != null)
         {
             Destroy(localCameraHandler.gameObject);
+        }
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log($"{Time.time} OnSceneLoaded: " + scene.name);
+
+        if (scene.name != "Ready")
+        {
+            //Tell the host that we need to perform the spawned code manually. 
+            if (Object.HasStateAuthority && Object.HasInputAuthority)
+                Spawned();
+
+            if (Object.HasStateAuthority)
+                GetComponent<CharacterMovementHandler>().RequestRespawn();
         }
     }
 }

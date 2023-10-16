@@ -4,6 +4,7 @@ using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using System;
+using UnityEngine.SceneManagement;
 
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -14,13 +15,15 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 
     //Other compoents
     CharacterInputHandler _characterInputHandler;
-    SessionListUIHandler sessionListUIHandler;
+    SessionListUIHandler _sessionListUIHandler;
+    private MainMenuUIHandler _mainMenuUIHandler;
     
     private void Awake()
     {
         // Create a new Dictionary
         _mapTokenIDWithNetworkPlayer = new Dictionary<int, NetworkPlayer>();
-        sessionListUIHandler = FindObjectOfType<SessionListUIHandler>(true);
+        _sessionListUIHandler = FindObjectOfType<SessionListUIHandler>(true);
+        _mainMenuUIHandler = FindObjectOfType<MainMenuUIHandler>();
     }
 
     int GetPlayerToken(NetworkRunner runner, PlayerRef player)
@@ -43,11 +46,6 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     public void SetConnectionTokenMapping(int token, NetworkPlayer networkPlayer)
     {
         _mapTokenIDWithNetworkPlayer.Add(token, networkPlayer);
-    }
-    
-    IEnumerator CallSpawnedCO()
-    {
-        yield return new WaitForSeconds(0.5f);
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
@@ -98,35 +96,44 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { Debug.Log("OnConnectFailed"); }
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) 
-    { //Only update the list of sessions when the session list UI handler is active
-        if (sessionListUIHandler == null)
+    { 
+        //Only update the list of sessions when the session list UI handler is active
+        if (_sessionListUIHandler == null)
             return;
 
         if (sessionList.Count == 0)
         {
             Debug.Log("Joined lobby no sessions found");
 
-            sessionListUIHandler.OnNoSessionsFound();
+            _sessionListUIHandler.OnNoSessionsFound();
+            _mainMenuUIHandler.createSessionButton.interactable = true;
         }
         else
         {
-            sessionListUIHandler.ClearList();
+            _sessionListUIHandler.ClearList();
 
             foreach (SessionInfo sessionInfo in sessionList)
             {
-                sessionListUIHandler.AddToList(sessionInfo);
+                _sessionListUIHandler.AddToList(sessionInfo);
 
                 Debug.Log($"Found session {sessionInfo.Name} playerCount {sessionInfo.PlayerCount}");
             }
-        } }
+            _mainMenuUIHandler.createSessionButton.interactable = true;
+        }
+        
+    }
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
-    public async void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { Debug.Log("OnHostMigration");
+    public async void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) 
+    {
+        Debug.Log("OnHostMigration");
 
         // Shutdown the current runner
         await runner.Shutdown(shutdownReason: ShutdownReason.HostMigration);
         
         // Find the network runner handler and start the host migration
-        FindObjectOfType<NetworkRunnerHandler>().StartHostMigration(hostMigrationToken); }
+        FindObjectOfType<NetworkRunnerHandler>().StartHostMigration(hostMigrationToken);
+        
+    }
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
     public void OnSceneLoadDone(NetworkRunner runner) { }
     public void OnSceneLoadStart(NetworkRunner runner) { }

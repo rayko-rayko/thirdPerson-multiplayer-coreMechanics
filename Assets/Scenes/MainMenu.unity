@@ -1569,6 +1569,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5886169505995042248}
     m_Modifications:
+    - target: {fileID: 2025331292946675474, guid: 20ecc6b8cebac42e588efba18271fc73, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2025331292946675474, guid: 20ecc6b8cebac42e588efba18271fc73, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2025331292946675474, guid: 20ecc6b8cebac42e588efba18271fc73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 530
+      objectReference: {fileID: 0}
+    - target: {fileID: 2387318492714205977, guid: 20ecc6b8cebac42e588efba18271fc73, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2387318492714205977, guid: 20ecc6b8cebac42e588efba18271fc73, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2387318492714205977, guid: 20ecc6b8cebac42e588efba18271fc73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 3904901995331355425, guid: 20ecc6b8cebac42e588efba18271fc73, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3510,6 +3534,7 @@ MonoBehaviour:
   sessionBrowserPanel: {fileID: 4685484423690540506}
   createSessionPanel: {fileID: 7563029885341977969}
   statusPanel: {fileID: 684601053732217215}
+  createSessionButton: {fileID: 6568910796683745026}
   playerNameInputField: {fileID: 5594865688884480475}
   sessionNameInputField: {fileID: 660895588699764851}
 --- !u!224 &8371809707866585581

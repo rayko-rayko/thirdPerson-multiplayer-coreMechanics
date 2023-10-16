@@ -48,11 +48,10 @@ public class NetworkRunnerHandler : MonoBehaviour
     public void StartHostMigration(HostMigrationToken hostMigrationToken)
     {
         // Create a new Network runner, old one is being shut down
-
         _networkRunner = Instantiate(networkRunnerPrefab);
         _networkRunner.name = "Network runner - Migrated";
 
-        var clientTAsk = InitializeNetworkRunnerHostMigration(_networkRunner, hostMigrationToken);
+        var clientTask = InitializeNetworkRunnerHostMigration(_networkRunner, hostMigrationToken);
         
         Debug.Log($"Host migration started");
     }
@@ -72,8 +71,7 @@ public class NetworkRunnerHandler : MonoBehaviour
     }
 
     // Network Runner'ı başlatmak için kullanılan method.
-    protected virtual Task InitializeNetworkRunner(NetworkRunner networkRunner, GameMode gameMode, string sessionName, byte[] connectionToken, NetAddress netAddress, SceneRef sceneRef,
-        Action<NetworkRunner> initialized)
+    protected virtual Task InitializeNetworkRunner(NetworkRunner networkRunner, GameMode gameMode, string sessionName, byte[] connectionToken, NetAddress netAddress, SceneRef sceneRef, Action<NetworkRunner> initialized)
     {
         var sceneManager = GetSceneManager(networkRunner);
 
@@ -105,11 +103,6 @@ public class NetworkRunnerHandler : MonoBehaviour
         // Network Runner'ı başlatmak için StartGameArgs nesnesi oluşturuluyor ve belirtilen parametrelerle dolduruluyor.
         return networkRunner.StartGame(new StartGameArgs
         {
-            // GameMode = gameMode, // ignored, Game mode comes with the HostMigrationToken
-            // Address =  netAddress,
-            // Scene = sceneRef,
-            // SessionName = "TestRoom",
-            // Initialized = initialized,
             SceneManager = sceneManager,
             HostMigrationToken = hostMigrationToken, // contains all necessary info to restart the Runner
             HostMigrationResume = HostMigrationResume, // this will be invoked to resume the simulation
@@ -151,6 +144,8 @@ public class NetworkRunnerHandler : MonoBehaviour
         }
 
         StartCoroutine(CleanUpHostMigrationCO());
+        
+        networkRunner.SetActiveScene(SceneManager.GetActiveScene().buildIndex);
         
         Debug.Log($"HostMigrationResume completed");
     }

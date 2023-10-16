@@ -6,6 +6,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class MainMenuUIHandler : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class MainMenuUIHandler : MonoBehaviour
     public GameObject sessionBrowserPanel;
     public GameObject createSessionPanel;
     public GameObject statusPanel;
+    public Button createSessionButton;
     
     [Header("Player settings")]
     public TMP_InputField playerNameInputField;
@@ -27,6 +29,8 @@ public class MainMenuUIHandler : MonoBehaviour
         {
             playerNameInputField.text = PlayerPrefs.GetString("PlayerNickname");
         }
+        createSessionButton.interactable = false;
+
     }
 
     void HideAllPanels()

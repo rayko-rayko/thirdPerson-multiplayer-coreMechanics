@@ -7,13 +7,11 @@ using Fusion;
 
 public class HPHandler : NetworkBehaviour
 {
-    [Networked(OnChanged = nameof(OnHPChanged))]
-    [SerializeField] private byte _HP { get; set; }
-    private const byte _startingHP = 5;
+    [Networked(OnChanged = nameof(OnHPChanged))] private byte _HP { get; set; }
+    [Networked(OnChanged = nameof(OnStateChanged))] public bool isDead { get; set; }
     
-    [Networked(OnChanged = nameof(OnStateChanged))]
-    public bool isDead { get; set; }
     private bool _isInitialized = false;
+    private const byte _startingHP = 5;
 
     public Color uiOnHitColor;
     public Image uiOnHitImage;
