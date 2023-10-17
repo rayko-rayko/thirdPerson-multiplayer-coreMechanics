@@ -69,8 +69,6 @@ public class CharacterInputHandler : MonoBehaviour
         
         // Set view input
         _localCameraHandler.SetViewInputVector(viewInputVector);
-        
-        Debug.Log($"{moveInputVector} --> moveinputvector, {isJumpPressed} --> isjump from {gameObject.name}");
     }
     
     public NetworkInputData GetNetworkInput()
