@@ -103,10 +103,10 @@ public class CharacterInputHandler : MonoBehaviour
         characterInputActions = new CharacterInputActions();
         characterInputActions.Enable();
     }
-    private void OnDisable()
-    {
-        characterInputActions.Disable();
-    }
+    // private void OnDisable()
+    // {
+    //     characterInputActions.Disable();
+    // }
 }
 
 

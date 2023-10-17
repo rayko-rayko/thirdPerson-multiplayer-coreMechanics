@@ -6,7 +6,9 @@ using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
 
-public class MigrationManager : MonoBehaviour, INetworkRunnerCallbacks
+namespace Asteroids.HostAdvanced
+{
+	public class MigrationManager : MonoBehaviour, INetworkRunnerCallbacks
 	{
 		private Dictionary<PlayerRef, List<NetworkObject>> _delayedMigration = new Dictionary<PlayerRef, List<NetworkObject>>();
 		private byte[] _uglyLocalTokenHack;
@@ -202,3 +204,4 @@ public class MigrationManager : MonoBehaviour, INetworkRunnerCallbacks
 		public void OnSceneLoadDone(NetworkRunner runner) { } 
 		public void OnSceneLoadStart(NetworkRunner runner) { }
 	}
+}
