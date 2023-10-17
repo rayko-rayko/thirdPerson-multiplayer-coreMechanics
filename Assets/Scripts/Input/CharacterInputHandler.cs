@@ -25,7 +25,7 @@ public class CharacterInputHandler : MonoBehaviour
     private void Awake()
     {
         _localCameraHandler = GetComponentInChildren<LocalCameraHandler>();
-        _characterMovementHandler = GetComponent<CharacterMovementHandler>();
+        _characterMovementHandler = GetComponentInChildren<CharacterMovementHandler>();
     }
 
     private void Start()
@@ -36,9 +36,10 @@ public class CharacterInputHandler : MonoBehaviour
 
     private void Update()
     {
+        
         CharacterMovementInput();
     }
-
+    
     void CharacterMovementInput()
     {
         if (!_characterMovementHandler.Object.HasInputAuthority)
@@ -74,22 +75,20 @@ public class CharacterInputHandler : MonoBehaviour
     
     public NetworkInputData GetNetworkInput()
     {
-        NetworkInputData networkInputData = new NetworkInputData();
+        NetworkInputData networkInputData = new NetworkInputData
+        {
+            // Move data
+            movementInput = moveInputVector,
+            // Aim data
+            aimForwardVector = _localCameraHandler.transform.forward,
+            // Jump data
+            isJumpPressed = isJumpPressed,
+            // Fire data
+            isFirePressed = characterInputActions.Controller.Shoot.triggered
+        };
 
-        // Move data
-        networkInputData.movementInput = moveInputVector;
-        
-        // Aim data
-        networkInputData.aimForwardVector = _localCameraHandler.transform.forward;
-        
-        // Jump data
-        networkInputData.isJumpPressed = isJumpPressed;
-        
         // Run data
         networkInputData.Buttons.Set(NetworkInputData.BUTTON_RUN, characterInputActions.Controller.Run.IsPressed());
-        
-        // Fire data
-        networkInputData.isFirePressed = characterInputActions.Controller.Shoot.triggered;
         
         // Reset variable
         isJumpPressed = false;
@@ -109,3 +108,119 @@ public class CharacterInputHandler : MonoBehaviour
         characterInputActions.Disable();
     }
 }
+
+
+/*
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CharacterInputHandler : MonoBehaviour
+{
+    private Vector2 _moveInputVector = Vector2.zero;
+    private Vector2 _viewInputVector = Vector2.zero;
+
+    private bool _isJumpButtonPressed = false;
+    private bool _isFireButtonPressed = false;
+    private bool _isGrenadeFireButtonPressed = false;
+    private bool _isFireRocketButtonPressed = false;
+    
+    // Other Components
+    // private CharacterMovementHandler _characterMovementHandler;
+    private LocalCameraHandler _localCameraHandler;
+    private CharacterMovementHandler _characterMovementHandler;
+
+    private void Awake()
+    {
+        // _characterMovementHandler = GetComponent<CharacterMovementHandler>();
+        _localCameraHandler = GetComponentInChildren<LocalCameraHandler>();
+        _characterMovementHandler = GetComponentInChildren<CharacterMovementHandler>();
+
+    }
+
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    private void Update()
+    {
+        if (!_characterMovementHandler.Object.HasInputAuthority)
+        {
+            Debug.Log($"characterinputhandler : hasinputauthority  false {transform.name}");
+            return;
+        }
+        
+        //View Input
+        _viewInputVector.x = Input.GetAxis("Mouse X");
+        _viewInputVector.y = Input.GetAxis("Mouse Y") * -1; // Invert the mouse look
+
+        // _characterMovementHandler.SetViewInputVector(_viewInputVector);
+        
+        // Move Input
+        _moveInputVector.x = Input.GetAxis("Horizontal");
+        _moveInputVector.y = Input.GetAxis("Vertical");
+        
+        // Jump
+        if (Input.GetButtonDown("Jump"))
+        {
+            _isJumpButtonPressed = true;
+        }
+        
+        // Fire
+        if (Input.GetButtonDown("Fire1"))
+        {
+            _isFireButtonPressed = true;
+        }
+        
+        // Grenade Throw
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            _isGrenadeFireButtonPressed = true;
+        }
+        
+        // Rocket Fire
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            _isFireRocketButtonPressed = true;
+        }
+        
+        // Set view
+        _localCameraHandler.SetViewInputVector(_viewInputVector);
+    }
+
+    public NetworkInputData GetNetworkInput()
+    {
+        NetworkInputData networkInputData = new NetworkInputData();
+        
+        // Aim Data
+        networkInputData.aimForwardVector = _localCameraHandler.transform.forward;
+        
+        // Move Data
+        networkInputData.movementInput = _moveInputVector;
+        
+        // Jump Data
+        networkInputData.isJumpPressed = _isJumpButtonPressed;
+        
+        // Fire Data
+        networkInputData.isFirePressed = _isFireButtonPressed;
+        //
+        // // Grenade Fire Date
+        // networkInputData.isGrenadeFireButtonPressed = _isGrenadeFireButtonPressed;
+        //
+        // // Rocket Fire Data
+        // networkInputData.isRocketFireButtonPressed = _isFireRocketButtonPressed;
+
+        // Reset variables now that we have read their states
+        _isJumpButtonPressed = false;
+        _isFireButtonPressed = false;
+        _isGrenadeFireButtonPressed = false;
+        _isFireRocketButtonPressed = false;
+        
+        return networkInputData;
+    }
+    
+}
+*/

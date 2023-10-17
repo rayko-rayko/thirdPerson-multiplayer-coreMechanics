@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     public NetworkPlayer playerPrefab;
-    
+
     // Mapping between Token ID and Re-created Players
     private Dictionary<int, NetworkPlayer> _mapTokenIDWithNetworkPlayer;
 
@@ -68,7 +68,11 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
             else
             {
                 Debug.Log($"Spawning new player for connection token {playerToken}"); 
-                NetworkPlayer spawnedNetworkPlayer = runner.Spawn(playerPrefab, Utils.GetRandomSpawnPoint(), Quaternion.identity, player);
+                var spawnedNetworkPlayer = runner.Spawn(playerPrefab, Utils.GetRandomSpawnPoint(), Quaternion.identity, player);
+                
+                //
+                // runner.SetPlayerObject(player, spawnedNetworkPlayer.GetComponent<NetworkObject>());
+                //
                 
                 // Store the token for the player
                 spawnedNetworkPlayer.token = playerToken;
@@ -83,7 +87,7 @@ public class Spawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (_characterInputHandler == null && NetworkPlayer.Local != null)
             _characterInputHandler = NetworkPlayer.Local.GetComponent<CharacterInputHandler>();
-
+        
         if (_characterInputHandler != null)
             input.Set(_characterInputHandler.GetNetworkInput());
     }

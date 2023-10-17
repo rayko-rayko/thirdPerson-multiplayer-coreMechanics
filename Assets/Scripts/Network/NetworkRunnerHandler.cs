@@ -15,6 +15,7 @@ public class NetworkRunnerHandler : MonoBehaviour
 
     NetworkRunner _networkRunner;
 
+    public static CharacterInputActions characterInputActions;
     private void Awake()
     {
         NetworkRunner networkRunnerInScene = FindObjectOfType<NetworkRunner>();
@@ -142,17 +143,26 @@ public class NetworkRunnerHandler : MonoBehaviour
                 });
             }
         }
-
+        
+        Debug.Log($" {networkRunner} {transform.name}");
+        
         StartCoroutine(CleanUpHostMigrationCO());
         
         networkRunner.SetActiveScene(SceneManager.GetActiveScene().buildIndex);
         
         Debug.Log($"HostMigrationResume completed");
+
+        
     }
 
     IEnumerator CleanUpHostMigrationCO()
     {
-        yield return new WaitForSeconds(3f);
+        Debug.Log($"before enable{characterInputActions.asset.enabled}, {transform.name}");
+        
+        yield return new WaitForSeconds(1.5f);
+        
+        characterInputActions.Enable();
+        Debug.Log($"after enable{characterInputActions.asset.enabled}, {transform.name}");
         
         FindObjectOfType<Spawner>().OnHostMigrationCleanUp();
     }
@@ -196,5 +206,15 @@ public class NetworkRunnerHandler : MonoBehaviour
         // Join existing game as a client
         var clientTask = InitializeNetworkRunner(_networkRunner, GameMode.Client, sessionInfo.Name,
             GameManager.instance.GetConnectionToken(), NetAddress.Any(), SceneManager.GetActiveScene().buildIndex, null);
+    }
+    
+    private void OnEnable()
+    {
+        characterInputActions = new CharacterInputActions();
+        characterInputActions.Enable();
+    }
+    private void OnDisable()
+    {
+        characterInputActions.Disable();
     }
 }

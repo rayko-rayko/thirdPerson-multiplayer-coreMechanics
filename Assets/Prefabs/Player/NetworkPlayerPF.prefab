@@ -652,7 +652,6 @@ MonoBehaviour:
   _isMoving: 0
   _movementDirection: {x: 0, y: 0, z: 0}
   _isRuninng: 0
-  _animator: {fileID: 0}
 --- !u!114 &4090020050934085020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,7 +733,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  __HP: 0
   _isDead: 0
   uiOnHitColor: {r: 1, g: 0.22352943, b: 0.22352943, a: 0.9411765}
   uiOnHitImage: {fileID: 4448245845724397616}
