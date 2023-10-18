@@ -21,6 +21,9 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
   public float viewUpDownRotationSpeed = 50.0f;
   public float smoothRotationSpeed = 50f;
   public Vector3 moveVelocityY;
+  
+  // Other components
+  private CharacterInputHandler _characterInputHandler;
 
   [Networked]
   [HideInInspector]
@@ -48,6 +51,7 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
     base.Awake();
     CacheController();
     _localCameraHandler = GetComponentInParent<LocalCameraHandler>();
+    _characterInputHandler = GetComponent<CharacterInputHandler>();
   }
 
   public override void Spawned() {
@@ -116,9 +120,14 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
       horizontalVel = Vector3.ClampMagnitude(horizontalVel + direction * acceleration * deltaTime, maxSpeed);
       
       Quaternion targetRotation = Quaternion.LookRotation(direction);
+      
       if (NetworkPlayer.Local.is3rdPersonCamera)
       {
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, smoothRotationSpeed * Runner.DeltaTime);
+          transform.rotation = Quaternion.SlerpUnclamped(transform.rotation, targetRotation, smoothRotationSpeed * Runner.DeltaTime);
+          
+        // if (_characterInputHandler.moveInputVector.y > -Mathf.Epsilon && _characterInputHandler.moveInputVector.x > -5 && Object.HasInputAuthority)
+        // {
+        // }
       }
     }
 
@@ -129,8 +138,6 @@ public class NetworkCharacterControllerPrototypeCustom : NetworkTransform
 
     Velocity   = (transform.position - previousPos) * Runner.Simulation.Config.TickRate;
     IsGrounded = Controller.isGrounded;
-    
-    Debug.Log(IsGrounded);
   }
 
   public void Rotate(float rotationY)

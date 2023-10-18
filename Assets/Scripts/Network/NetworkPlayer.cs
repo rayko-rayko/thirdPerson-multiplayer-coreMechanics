@@ -49,7 +49,10 @@ public class NetworkPlayer : NetworkBehaviour, IPlayerLeft
         {
             Local = this;
             // Sets the layer of the local plyers model
-            Utils.SetRenderLayerInChildren(playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
+            if (isFPSCamera)
+            { 
+                Utils.SetRenderLayerInChildren(playerModel, LayerMask.NameToLayer("LocalPlayerModel"));
+            }
             
             // Disable main camera
             if (Camera.main != null)

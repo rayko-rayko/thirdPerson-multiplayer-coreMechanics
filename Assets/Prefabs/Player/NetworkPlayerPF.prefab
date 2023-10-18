@@ -307,12 +307,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 576064118989492549}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.344, z: 0.044}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2764582860107948917}
+  m_Father: {fileID: 1473169218634368520}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &598981264404888683
 GameObject:
@@ -627,12 +627,12 @@ MonoBehaviour:
   TargetInterpolationDelay: 0.03
   gravity: -20
   jumpImpulse: 8
-  acceleration: 10
-  braking: 10
+  acceleration: 25
+  braking: 7
   maxSpeed: 2
   rotationSpeed: 50
   viewUpDownRotationSpeed: 50
-  smoothRotationSpeed: 50
+  smoothRotationSpeed: 60
   moveVelocityY: {x: 0, y: 0, z: 0}
   _IsGrounded: 0
   _Velocity: {x: 0, y: 0, z: 0}
@@ -910,7 +910,6 @@ Transform:
   - {fileID: 1473169218634368520}
   - {fileID: 6758769960611360603}
   - {fileID: 7806936496275571101}
-  - {fileID: 1076715543042776956}
   - {fileID: 4692778395892200754}
   - {fileID: 677257661634101667}
   m_Father: {fileID: 1518080403815182559}
@@ -4073,6 +4072,7 @@ Transform:
   m_Children:
   - {fileID: 8705315957171059986}
   - {fileID: 5090073571111315091}
+  - {fileID: 1076715543042776956}
   m_Father: {fileID: 2764582860107948917}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &4871758380873224026

@@ -21,12 +21,15 @@ public class CharacterAnimation : NetworkBehaviour
 
     // Other components
     private NetworkCharacterControllerPrototypeCustom _networkCharacterControllerPrototypeCustom;
+    private CharacterInputHandler _characterInputHandler;
     private NetworkInputData _networkInputData;
     
     private void Awake()
     {
-        _mecanimAnimator = GetComponentInChildren<NetworkMecanimAnimator>();
         _networkCharacterControllerPrototypeCustom = GetComponent<NetworkCharacterControllerPrototypeCustom>();
+        _characterInputHandler = GetComponent<CharacterInputHandler>();
+        _mecanimAnimator = GetComponentInChildren<NetworkMecanimAnimator>();
+
     }
     private void Start()
     {

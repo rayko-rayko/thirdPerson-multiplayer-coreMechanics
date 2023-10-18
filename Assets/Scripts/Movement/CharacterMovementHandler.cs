@@ -62,6 +62,9 @@ public class CharacterMovementHandler : NetworkBehaviour
         
         if (GetInput(out NetworkInputData networkInputData))
         {
+            // Check if we have fallen off the world
+            CheckFallRespawn();
+            
             // ---------Rotate the transform according to the client aim vector------------
             transform.forward = networkInputData.aimForwardVector;
             
@@ -71,7 +74,6 @@ public class CharacterMovementHandler : NetworkBehaviour
             transform.rotation = rotation;
             
             // -------------------------------Move-----------------------------------------
-            
             direction = default;
             direction = transform.forward * networkInputData.movementInput.y + transform.right * networkInputData.movementInput.x;
             direction.Normalize();
@@ -84,10 +86,8 @@ public class CharacterMovementHandler : NetworkBehaviour
             
             // --------------------------------Run-----------------------------------------
             if (networkInputData.IsDown(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 8; isRuninng = true; }
+            else if (_characterInputHandler.moveInputVector.y > 0.1) { _networkCharacterControllerPrototypeCustom.maxSpeed = 3; isRuninng = false; return; }
             else if (networkInputData.IsUp(NetworkInputData.BUTTON_RUN)) { _networkCharacterControllerPrototypeCustom.maxSpeed = 3; isRuninng = false; }
-            
-            // Check if we have fallen off the world
-            CheckFallRespawn();
         }
         
         if (networkInputData.movementInput == Vector2.zero) { isMoving = false; }
